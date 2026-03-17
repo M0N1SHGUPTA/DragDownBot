@@ -8,7 +8,19 @@ const app = express();
 
 const BOT_TOKEN = process.env.bot_token;
 const RAPIDAPI_KEY = process.env.rapid_api_key;
-const bot = new TelegramBot(BOT_TOKEN, {polling: true});
+const RENDER_URL = process.env.render_url;
+const bot = new TelegramBot(BOT_TOKEN);
+bot.setWebHook(`${RENDER_URL}/webhook`);
+
+app.post("/webhook", (req, res)=>{
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+});
+
+app.get('/', (req, res)=>{
+    res.send("Bot is running...");
+});
+
 
 
 // API FETCHES the URL from rapid api video downloader api
@@ -57,4 +69,6 @@ bot.on("message", async (msg)=>{
     }
 });
 
-console.log("Bot is running....");
+app.listen(3000, ()=>{
+    console.log("bot is running on webhook mode!);
+});
