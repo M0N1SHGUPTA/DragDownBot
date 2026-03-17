@@ -1,10 +1,13 @@
 const express = require("express");
 const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
+require("dotenv").config();
 
 const app = express();
 
-const BOT_TOKEN = "bot_token";
+
+const BOT_TOKEN = process.env.bot_token;
+const RAPIDAPI_KEY = process.env.rapid_api_key;
 const bot = new TelegramBot(BOT_TOKEN, {polling: true});
 
 
@@ -13,7 +16,7 @@ async function fetchMedia(PintrestUrl){
     const options = {
         method: "POST",
         url: 'https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink', headers: {
-            'x-rapidapi-key': 'rapid_api_key',
+            'x-rapidapi-key': RAPIDAPI_KEY,
             'x-rapidapi-host': 'social-download-all-in-one.p.rapidapi.com',
             'Content-Type': 'application/json'
         },
