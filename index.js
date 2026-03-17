@@ -70,5 +70,5 @@ bot.on("message", async (msg)=>{
 });
 
 app.listen(3000, ()=>{
-    console.log("bot is running on webhook mode!);
+    console.log("bot is running on webhook mode!");
 });
