@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const app = express();
 
+app.use(express.json());
 
 const BOT_TOKEN = process.env.bot_token;
 const RAPIDAPI_KEY = process.env.rapid_api_key;
