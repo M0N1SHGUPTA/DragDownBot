@@ -1,0 +1,57 @@
+const express = require("express");
+const axios = require("axios");
+const TelegramBot = require("node-telegram-bot-api");
+
+const app = express();
+
+const BOT_TOKEN = "bot_token";
+const bot = new TelegramBot(BOT_TOKEN, {polling: true});
+
+
+// API FETCHES the URL from rapid api video downloader api
+async function fetchMedia(PintrestUrl){
+    const options = {
+        method: "POST",
+        url: 'https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink', headers: {
+            'x-rapidapi-key': 'rapid_api_key',
+            'x-rapidapi-host': 'social-download-all-in-one.p.rapidapi.com',
+            'Content-Type': 'application/json'
+        },
+        data: {
+            url : PintrestUrl
+        }
+    };
+    const response = await axios.request(options);
+    return response.data.medias[0].url;
+}
+
+
+// async function main(){
+//     const data = await fetchMedia("https://in.pinterest.com/pin/916904805404482524/");
+//     console.log(data);
+// }
+// main();
+
+// Bot sends reply with the link of the video url
+
+bot.on("message", async (msg)=>{
+    const chatId = msg.chat.id;
+    const text = msg.text;
+
+    //ignore if its not a url
+    if(!text.startsWith("http")){
+        bot.sendMessage(chatId, "❌ Could not download. Make sure it's a valid link.");
+        return;
+    };
+
+    try{
+        await bot.sendMessage(chatId, "⏳ Fetching media...");
+        const mediaUrl = await fetchMedia(text);
+        await bot.sendVideo(chatId, mediaUrl);
+    } catch(err){
+        await bot.sendMessage(chatId, "❌ Could not download. Make sure it's a valid link.");
+        console.log(err.message);
+    }
+});
+
+console.log("Bot is running....");
